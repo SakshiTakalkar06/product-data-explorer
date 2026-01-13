@@ -1,30 +1,31 @@
-# Product Data Explorer – Backend
+# Product Data Explorer
 
-## Tech Stack
+Full-stack application built using:
+
+## Backend
 - NestJS
 - Prisma ORM
 - PostgreSQL
-- TypeScript
+- REST APIs (CRUD)
+- Swagger API Docs
+
+## Frontend
+- React
+- Axios
+- Product CRUD UI
+- Runs on http://localhost:3000
 
 ## Features
-- Create product
-- Get all products
-- Get product by ID
-- Update product
-- Delete product
+- Create Product
+- View Products
+- Update Product
+- Delete Product
 
-## API Endpoints
+## How to Run
 
-| Method | Endpoint | Description |
-|------|---------|------------|
-| POST | /products | Create product |
-| GET | /products | Get all products |
-| GET | /products/:id | Get product by ID |
-| PATCH | /products/:id | Update product |
-| DELETE | /products/:id | Delete product |
-
-## Setup Instructions
-
+### Backend
 ```bash
+cd backend
 npm install
+npx prisma migrate dev
 npm run start:dev
