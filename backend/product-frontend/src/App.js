@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./App.css";
 
-const API_URL = "http://localhost:3000/products";
-
+const API_URL = 'https://product-data-explorer-1-wj1.onrender.com/products'
 function App() {
   const [products, setProducts] = useState([]);
 
@@ -24,7 +23,7 @@ function App() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get(API_URL);
+      const res = await axios.get("https://product-data-explorer-1-wj1.onrender.com/products");
       setProducts(res.data);
     } catch (err) {
       setError("Unable to load products.");
@@ -47,7 +46,7 @@ function App() {
     }
 
     try {
-      await axios.post(API_URL, {
+      await axios.post("https://product-data-explorer-1-wj1.onrender.com/products", {
         name: name.trim(),
         price: Number(price),
       });
@@ -71,7 +70,7 @@ function App() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`${API_URL}/${id}`);
+      await axios.delete(`https://product-data-explorer-1-wj1.onrender.com/products/${id}`);
 
       setMessage("Product deleted successfully.");
       fetchProducts();
@@ -113,7 +112,7 @@ function App() {
     }
 
     try {
-      await axios.patch(`${API_URL}/${editId}`, {
+      await axios.patch(`${`https://product-data-explorer-1-wj1.onrender.com/products/${editId}`}`, {
         name: editName.trim(),
         price: Number(editPrice),
       });
