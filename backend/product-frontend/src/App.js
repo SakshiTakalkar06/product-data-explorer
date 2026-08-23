@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./App.css";
 
-const API_URL = 'https://product-data-explorer-1-wj1.onrender.com/products'
+// Backend API URL
+const API_URL = "https://product-data-explorer-1-rwji.onrender.com";
+
 function App() {
   const [products, setProducts] = useState([]);
 
@@ -16,21 +18,29 @@ function App() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  // =========================
   // GET PRODUCTS
+  // =========================
   useEffect(() => {
     fetchProducts();
   }, []);
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get("https://product-data-explorer-1-wj1.onrender.com/products");
+      setError("");
+
+      const res = await axios.get(`${API_URL}/products`);
+
       setProducts(res.data);
     } catch (err) {
+      console.error("Error fetching products:", err);
       setError("Unable to load products.");
     }
   };
 
+  // =========================
   // ADD PRODUCT
+  // =========================
   const addProduct = async () => {
     setMessage("");
     setError("");
@@ -46,40 +56,53 @@ function App() {
     }
 
     try {
-      await axios.post("https://product-data-explorer-1-wj1.onrender.com/products", {
+      await axios.post(`${API_URL}/products`, {
         name: name.trim(),
         price: Number(price),
       });
 
       setName("");
       setPrice("");
+
       setMessage("Product added successfully.");
 
-      fetchProducts();
+      await fetchProducts();
     } catch (err) {
+      console.error("Error adding product:", err);
       setError("Failed to add product.");
     }
   };
 
+  // =========================
   // DELETE PRODUCT
+  // =========================
   const deleteProduct = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this product?"
     );
 
-    if (!confirmDelete) return;
+    if (!confirmDelete) {
+      return;
+    }
+
+    setMessage("");
+    setError("");
 
     try {
-      await axios.delete(`https://product-data-explorer-1-wj1.onrender.com/products/${id}`);
+      await axios.delete(`${API_URL}/products/${id}`);
 
       setMessage("Product deleted successfully.");
-      fetchProducts();
+
+      await fetchProducts();
     } catch (err) {
+      console.error("Error deleting product:", err);
       setError("Failed to delete product.");
     }
   };
 
+  // =========================
   // START EDIT
+  // =========================
   const startEdit = (product) => {
     setEditId(product.id);
     setEditName(product.name);
@@ -89,14 +112,18 @@ function App() {
     setError("");
   };
 
+  // =========================
   // CANCEL EDIT
+  // =========================
   const cancelEdit = () => {
     setEditId(null);
     setEditName("");
     setEditPrice("");
   };
 
+  // =========================
   // UPDATE PRODUCT
+  // =========================
   const updateProduct = async () => {
     setMessage("");
     setError("");
@@ -112,7 +139,7 @@ function App() {
     }
 
     try {
-      await axios.patch(`${`https://product-data-explorer-1-wj1.onrender.com/products/${editId}`}`, {
+      await axios.patch(`${API_URL}/products/${editId}`, {
         name: editName.trim(),
         price: Number(editPrice),
       });
@@ -121,8 +148,9 @@ function App() {
 
       setMessage("Product updated successfully.");
 
-      fetchProducts();
+      await fetchProducts();
     } catch (err) {
+      console.error("Error updating product:", err);
       setError("Failed to update product.");
     }
   };
@@ -130,7 +158,9 @@ function App() {
   return (
     <div className="app">
 
-      {/* HEADER */}
+      {/* =========================
+          HEADER
+      ========================= */}
       <header className="header">
         <div>
           <h1>Product Manager</h1>
@@ -145,14 +175,21 @@ function App() {
 
       <main className="container">
 
-        {/* ADD PRODUCT */}
+        {/* =========================
+            ADD PRODUCT
+        ========================= */}
         <section className="add-card">
-          <h2 className="section-title">Add Product</h2>
+
+          <h2 className="section-title">
+            Add Product
+          </h2>
+
           <p className="section-subtitle">
             Create a new product
           </p>
 
           <div className="form">
+
             <input
               type="text"
               placeholder="Product name"
@@ -168,45 +205,66 @@ function App() {
               min="1"
             />
 
-            <button className="primary-btn" onClick={addProduct}>
+            <button
+              className="primary-btn"
+              onClick={addProduct}
+            >
               + Add Product
             </button>
+
           </div>
 
+          {/* SUCCESS MESSAGE */}
           {message && (
             <div className="message success">
               {message}
             </div>
           )}
 
+          {/* ERROR MESSAGE */}
           {error && (
             <div className="message error">
               {error}
             </div>
           )}
+
         </section>
 
-        {/* EDIT PRODUCT */}
-        {editId && (
+        {/* =========================
+            EDIT PRODUCT
+        ========================= */}
+        {editId !== null && (
           <section className="edit-card">
-            <h2 className="section-title">Edit Product</h2>
+
+            <h2 className="section-title">
+              Edit Product
+            </h2>
 
             <div className="form">
+
               <input
                 type="text"
+                placeholder="Product name"
                 value={editName}
-                onChange={(e) => setEditName(e.target.value)}
+                onChange={(e) =>
+                  setEditName(e.target.value)
+                }
               />
 
               <input
                 type="number"
+                placeholder="Price"
                 value={editPrice}
-                onChange={(e) => setEditPrice(e.target.value)}
+                onChange={(e) =>
+                  setEditPrice(e.target.value)
+                }
                 min="1"
               />
+
             </div>
 
             <div className="edit-actions">
+
               <button
                 className="update-btn"
                 onClick={updateProduct}
@@ -220,27 +278,47 @@ function App() {
               >
                 Cancel
               </button>
+
             </div>
+
           </section>
         )}
 
-        {/* PRODUCTS */}
+        {/* =========================
+            PRODUCTS
+        ========================= */}
         <section className="products-section">
 
           <div className="products-header">
+
             <h2>Products</h2>
-            <p>All products in your database</p>
+
+            <p>
+              All products in your database
+            </p>
+
           </div>
 
           {products.length === 0 ? (
+
             <div className="empty">
-              <h3>No products found</h3>
-              <p>Add your first product above.</p>
+
+              <h3>
+                No products found
+              </h3>
+
+              <p>
+                Add your first product above.
+              </p>
+
             </div>
+
           ) : (
+
             <div className="product-grid">
 
               {products.map((product) => (
+
                 <div
                   className="product-card"
                   key={product.id}
@@ -250,28 +328,37 @@ function App() {
                     📦
                   </div>
 
-                  <h3>{product.name}</h3>
+                  <h3>
+                    {product.name}
+                  </h3>
 
                   <div className="product-id">
                     ID: {product.id}
                   </div>
 
                   <div className="price">
-                    ₹{Number(product.price).toLocaleString("en-IN")}
+                    ₹
+                    {Number(product.price).toLocaleString(
+                      "en-IN"
+                    )}
                   </div>
 
                   <div className="actions">
 
                     <button
                       className="edit-btn"
-                      onClick={() => startEdit(product)}
+                      onClick={() =>
+                        startEdit(product)
+                      }
                     >
                       Edit
                     </button>
 
                     <button
                       className="delete-btn"
-                      onClick={() => deleteProduct(product.id)}
+                      onClick={() =>
+                        deleteProduct(product.id)
+                      }
                     >
                       Delete
                     </button>
@@ -279,14 +366,17 @@ function App() {
                   </div>
 
                 </div>
+
               ))}
 
             </div>
+
           )}
 
         </section>
 
       </main>
+
     </div>
   );
 }
